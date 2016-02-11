@@ -1,0 +1,47 @@
+# Configuration parameters 
+
+# Number of Iterations per Configuration
+num = 1
+
+# Test Results File
+results = results.csv
+
+name = fast-median
+kind = multithread
+jar = job.jar
+
+# Local Hadoop Home
+hadoop.home = /users/Surekha/hadoop-2.6.3
+
+# AWS S3 Initialization
+region = us-east-1
+check.bucket = s3://mra3sa
+check.input = s3://mra3sa/input
+check.logs = s3://mra3sa/logs
+delete.output = s3://mra3sa/output
+upload.jar = s3://mra3sa
+
+# AWS EMR Cluster Configuration
+cluster.name = MyCluster
+step.name = Step
+release.label = emr-4.3.0
+log.uri = s3://mra3sa/logs
+service.role = EMR_DefaultRole
+job.flow.role = EMR_EC2_DefaultRole
+ec2.key.name = surekhakey
+instance.count = 3
+keep.job.flow.alive = false
+master.instance.type = m3.xlarge
+slave.instance.type = m3.xlarge
+
+
+# name of the job (optional)
+name =
+# main class (required)
+main = neu.mr.Plain
+# input directory  (required)
+input = /Users/Surekha/hadoop_ws/src/resources/all
+# output directory (optional)
+output =
+# list of argument strings (optional)
+arguments =“-p -input=/Users/Surekha/hadoop_ws/src/resources/all -query=FastMedian”

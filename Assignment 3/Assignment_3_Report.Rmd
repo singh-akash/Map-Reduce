@@ -1,0 +1,65 @@
+---
+title: "Map Reduce Assignment 3 Report"
+authors: "Akash Singh, Surekha Jadhwani"
+output: pdf_document
+---
+
+## Authors: Akash Singh, Surekha Jadhwani
+
+## Description:
+The aim of this assignment is to conduct benchmarking to compare the cost of computing (A) mean and (B) median price, and (C) fast median for different environments ((i) singe threaded Java, (ii) multi-threaded Java, (iii) pseudo-distributed MR, and (iv) distributed MR - AWS EMR) using the Bureau of Transport Statistics' On-time Performance (OTP) dataset which has over 27 years of air travel information about flights in the USA. 
+In our program, sane records with Average ticket price missing or negative or higher than 100000 will not be used to calculate mean ticket price. 
+
+Our implementation of Fast Median uses approximation technique. It is 99.99% accurate with a deviation of 0.01%. 
+For example: US carrier value for the month of December calculated using Median is 475.53 whereas using Fast Median is 470.35
+
+The performance evaluation of different configurations using R script is as shown below:
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(grid)
+data <- read.csv("results.csv", header = FALSE, sep = ",")
+names(data) <- c("Task", "Environment", "Time")
+axis.tasks = function(tasks) {
+  structure(
+    list(groups=tasks),
+    class = c("element_custom","element_blank"), 
+    text = element_text(size = 10, vjust = 1, angle = 90)
+    )
+}
+element_grob.element_custom <- function(element, x,...)  {
+  cat <- list(...)[[1]]
+  tasks <- element$task
+  ll <- by(data$Task,data$Environment,I)
+  tt <- as.numeric(x)
+  grbs <- Map(function(z,t){
+    labs <- ll[[z]]
+    vp = viewport(
+      x = unit(t,'native'), 
+      height=unit(2,'line'),
+      width=unit(diff(tt)[1],'native'),
+      xscale=c(0,length(labs)))
+    grid.rect(vp=vp)
+    textGrob("",x= unit(seq_along(labs)-0.5,
+                          'native'),
+             y=unit(2,'line'),
+             vp=vp,
+             vjust = 1,
+             hjust = 0)
+  },cat,tt)
+  g.X <- textGrob(cat, x=x)
+  gTree(children=gList(do.call(gList,grbs),g.X), cl = "custom_axis")
+}
+grobHeight.custom_axis = 
+  heightDetails.custom_axis = function(x, ...)
+    unit(3, "lines")
+p <- ggplot(data=data, aes(x=Environment, y=Time, fill=Task), xlab("Environment")) + 
+  geom_bar(position = position_dodge(width=0.9),stat='identity') +
+  geom_text(aes(label=paste(Time)),
+            position=position_dodge(width=0.9), vjust=-0.25)+
+  theme(axis.text.x = axis.tasks(unique(data$Task)))
+p + ggtitle("Performance Evaluation")
+```
+
+## Analysis:
+We observed that single-threaded program was slower than multithreaded mode while multithreaded program (with 5 threds) had advantages over pseudo-distributed mode. We have not noticed advantages of using hadoop yet but may be with larger set of data, performance of hadoop will be better. With scaling of data, the fully-distributed cloud performance will improve as it was observed that cloud performance was comparatively better as the load increased (more input data files).
