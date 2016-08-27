@@ -1,0 +1,68 @@
+---
+title: "Map Reduce Assignment 4 Report"
+authors: "Akash Singh, Surekha Jadhwani"
+output: pdf_document
+---
+
+## Authors: Akash Singh, Surekha Jadhwani
+
+## Description:
+The aim of this assignment is to figure out the cheapest airline by finding the relation between average ticket prices and scheduled flight minutes over a number of years using the Bureau of Transport Statistics' On-time Performance (OTP) dataset which has over 27 years of air travel information about flights in the USA. 
+In our program, sane records with Average ticket price missing or negative or higher than 100000 will not be used for any calculation. 
+
+## Implementation: 
+
+We are first using MapReduce program to extract carriers, their average ticket prices and scheduled flight minutes for all the years in the given dataset. The output of this program is then used by R program to compute intercept and slope of simple linear regression model. Output of R program is later used by another MapReduce program which finds the least expensive carrier(carrier with lowest price at N for the most years.) and computes its week-wise median prices for all the years. This is finally used for plotting the graph.
+
+The graph of the median price of the least expensive carrier for each week of the entire dataset, for N=1 using R Script is shown below:
+
+```{r, echo=FALSE}
+library(plyr)
+arg2 <- commandArgs(trailingOnly = TRUE) 
+file_list2 <- list.files(path = "/Users/Surekha/Documents/NEU/Courses/MapReduce/Jadhwani_Singh_A4/output2", pattern = "part-r*", full.names = TRUE)
+for (file2 in file_list2) {
+  if (!exists("carr_data2")){
+    carr_data2 <- read.csv(file2, header=FALSE, sep=",")
+  }
+  if (exists("carr_data2")){
+    temp_dataset2 <-read.csv(file2, header=FALSE, sep=",")
+    names(temp_dataset2) <- names(carr_data2)
+    carr_data2 <-rbind(carr_data2, temp_dataset2)
+    rm(temp_dataset2)
+  }
+}
+names(carr_data2) <- c("Carrier", "Year", "Week","MedianPrice")
+carr_data2$combo <- paste(carr_data2$Year,carr_data2$Week, sep = "-")
+carr_data2$Date <- as.Date(paste("1", carr_data2$Week, carr_data2$Year, sep = "-"), format = "%w-%W-%Y")
+mods2 <- lm(MedianPrice~Date, data=carr_data2)
+p2 <- plot(carr_data2$MedianPrice ~ carr_data2$Date, ylab = "Median Ticket Prices", xlab = "Year", main = carr_data2$Carrier[1])
+abline(mods2)
+```
+
+The graph of the median price of the least expensive carrier for each week of the entire dataset, for N=200 using R Script is shown below:
+
+```{r, echo=FALSE}
+library(plyr)
+arg2 <- commandArgs(trailingOnly = TRUE) 
+file_list2 <- list.files(path = "/Users/Surekha/Documents/NEU/Courses/MapReduce/Jadhwani_Singh_A4/output2_200", pattern = "part-r*", full.names = TRUE)
+for (file in file_list2) {
+  if (!exists("carr_data")){
+    carr_data <- read.csv(file, header=FALSE, sep=",")
+  }
+  if (exists("carr_data")){
+    temp_dataset <-read.csv(file, header=FALSE, sep=",")
+    names(temp_dataset) <- names(carr_data)
+    carr_data <-rbind(carr_data, temp_dataset)
+    rm(temp_dataset)
+  }
+}
+names(carr_data) <- c("Carrier", "Year", "Week","MedianPrice")
+carr_data$combo <- paste(carr_data$Year,carr_data$Week, sep = "-")
+carr_data$Date <- as.Date(paste("1", carr_data$Week, carr_data$Year, sep = "-"), format = "%w-%W-%Y")
+mods <- lm(MedianPrice~Date, data=carr_data)
+p <- plot(carr_data$MedianPrice ~ carr_data$Date, ylab = "Median Ticket Prices", xlab = "Year", main = carr_data$Carrier[1])
+abline(mods)
+```
+
+## Analysis:
+We observed that as the scheduled flight minutes increased, the median ticket prices decreased. Another observation is that the ticket prices have increased over the period of many years without considering inflation.
