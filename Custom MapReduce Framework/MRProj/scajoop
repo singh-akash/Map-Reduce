@@ -1,0 +1,34 @@
+#!/bin/bash
+#User program JAR and cluster_conf file are in current directory '.'
+#SCAJoop.jar (including log4j2.xml which is in that JAR) is in environment variable SCAJOOP_HOME (see below for example)
+#AWS mode will upload User program JAR to AWS S3 (ascj-bucket). This will require parsing cluster_conf.
+#
+#Example install:
+# $ export SCAJOOP_HOME=/path/to/to/here
+# $ export PATH=$PATH:$SCAJOOP_HOME
+#
+#Example script command: ./scajoop A2Proj.jar flight.app.A2Main s3://mrascj/input s3://chrisandjoemrbucket/out123
+
+# Check 
+if [ $# -lt 4 ]; then
+  echo "Usage: scajoop <jar> <MainClass> <input> <output> [--other arguments (optional)]"
+  exit
+fi
+
+awsline="mode=aws"
+
+#Parse cluster_conf (if aws mode, then upload user JAR to AWS)
+while IFS= read -r line; do
+  line=${line%$'\n'}
+  if [ "$line" = "$awsline" ]; then
+      aws s3 cp $1 s3://ascj-bucket/ --grants full=uri=http://acs.amazonaws.com/groups/global/AllUsers 
+  fi
+done < "./cluster_conf"
+
+#Run the job
+userjar=$1
+mainclass=$2
+shift
+shift
+
+java -cp .:./$userjar:$SCAJOOP_HOME/SCAJoop.jar:$CLASSPATH $mainclass "$@"

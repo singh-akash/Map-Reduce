@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="MyApp" packages="">
+	<Appenders>
+	<!-- Logging now occurs on a per-node basis. Admin talks with NodeManager to get logs for a given node. Don't change the host address or the port number below. -->
+		<Socket name="socket" host="127.0.0.1" port="6666">
+			<SerializedLayout />
+		</Socket>
+		<Console name="STDOUT">
+			<PatternLayout pattern="[%d] [%p] [%c] %m%n" />
+		</Console>
+    <!--File name="LogFile" fileName="/home/ec2-user/app.log"-->
+    <File name="LogFile" fileName="app.log">
+			<PatternLayout pattern="[%d] [%p] [%c] %m%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<!-- To change where log messages go, change LogFile to any of the above 
+				appenders names (socket, STDOUT, or LogFile (names are somewhat self explanatory)). -->
+			<AppenderRef ref="socket" />
+		</Root>
+	</Loggers>
+</Configuration>

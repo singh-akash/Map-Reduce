@@ -1,0 +1,35 @@
+MapReduce Final Project. 
+
+CS 6240 - Parallel Data Processing in MapReduce
+Joseph Sackett, Christopher Willig, Akash Singh, Surekha Jadhwani
+jsackett@ccs.neu.edu, willig.c@husky.neu.edu, singh.aka@husky.neu.edu, jadhwani.s@husky.neu.edu
+April 22, 2016
+
+Description
+-----------
+The goal of this assignment is to build a distributed data processing framework that emulates Hadoop. 
+This code can be executed on AWS EMR or locally.
+This code in these directories is SCAJoop, the framework.
+You must go to A2Project peer directory to run that MapReduce application on SCAJoop.
+The complete instructions are below.
+
+Prerequisites
+-------------
+These components are required:
+- Java 8
+- Apache Maven
+- AWS CLI
+- pdflatex (sudo apt-get install texlive-latex-base)
+
+Installation
+------------
+1) Unzip project file.
+2) Open command prompt.
+3) Navigate to directory where project files unzipped.
+4) Navigate to subdirectory A2Project.
+5) Change key and security group in file: cluster_conf
+6) You can create your own bucket and upload input, but it will work with no changes to Makefile.
+7) $ make run-cloud
+	EC2 machines will come up and the job status will display in the shell where make executed.
+8) $ make download-output-aws 
+9) $ make report  (or skip this step as report is already generated as report.pdf)

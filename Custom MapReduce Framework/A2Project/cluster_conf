@@ -1,0 +1,32 @@
+# Mode is {local, aws}. AWS works better because no risk of running out of memory.
+mode=aws
+
+# Keyname found here: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#KeyPairs:sort=keyName
+# Private key must be in ~/.aws
+aws_keyname=VaKey2
+
+# Security group has to be world accessible on all port numbers (CIDR notation: 0.0.0.0/0).
+aws_securitygroup=OpenAll
+
+# Name of one of the instance types below.
+aws_instancetype=t2.large
+
+# Number of machines in cluster.
+aws_instancenum=5
+
+# AWS Instance/Machine Types:
+# Name           #  CPUs         Memory (GB)    Cost per Hour ($)
+# t2.nano        1              0.5            0.0065        
+# t2.micro       1              1              0.013          
+# t2.small       1              2              0.026          
+# t2.medium      2              4              0.052          
+# t2.large       2              8              0.104          
+# m4.large       2              8              0.12          
+# m4.xlarge      4              16             0.239          
+# m4.2xlarge     8              32             0.479          
+# m4.4xlarge     16             64             0.958          
+# m4.10xlarge    40             160            2.394          
+# m3.medium      1              3.75           0.067          
+# m3.large       2              7.5            0.133          
+# m3.xlarge      4              15             0.266          
+# m3.2xlarge     8              30             0.532
